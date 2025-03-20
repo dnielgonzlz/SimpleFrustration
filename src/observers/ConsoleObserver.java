@@ -33,7 +33,7 @@ public class ConsoleObserver implements GameObserver {
     public void onHit(Player attacker, Player victim) {
         String victimColor = victim.getColor();
         
-        System.out.println(ConsoleColors.colorize(victimColor + " Position " + victim.getCurrentPosition() + " hit!", victimColor));
+        System.out.println(ConsoleColors.colorize(victimColor + " Position " + victim.getCurrentPosition() + " \u001B[1mHIT!\u001B[0m", victimColor));
         System.out.println(ConsoleColors.colorize(victimColor + " moves from Position " + 
                            victim.getCurrentPosition() + " to HOME (Position " + 
                            victim.getHomePosition() + ")", victimColor));
