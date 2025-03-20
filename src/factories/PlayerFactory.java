@@ -1,12 +1,23 @@
 package factories;
 
+import board.IBoard;
+import players.Player;
 
-//Purpose: Creates players with the correct home/end positions based on the board size.
-//
-//        Methods:
-//
-//createPlayer(String color, int homePos, int endPos): Returns a Player instance.
-
-
+/**
+ * Factory for creating players with the correct home/end positions.
+ */
 public class PlayerFactory {
+    
+    /**
+     * Create a player based on their color and the board
+     * @param color Player color
+     * @param board The game board
+     * @return A new Player instance
+     */
+    public Player createPlayer(String color, IBoard board) {
+        int homePosition = board.getHomePosition(color);
+        int endPosition = board.getMainBoardSize() + board.getTailSize(); // End position is last tail position
+        
+        return new Player(color, homePosition, endPosition);
+    }
 }
