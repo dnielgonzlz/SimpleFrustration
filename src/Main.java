@@ -125,38 +125,26 @@ public class Main {
      * Prompt the user for the rule types
      */
     private static String[] promptRuleTypes(Scanner scanner) {
-        System.out.println("Select rules (you can choose multiple):");
-        System.out.println("1. Player must land exactly on END position to win");
-        System.out.println("2. Player will be sent HOME when HIT");
-        System.out.println("3. Basic rules only (no exact END, no HIT penalties)");
+        System.out.println("Select rules:");
+        System.out.println("1. Basic rules only (no exact END, no HIT penalties)");
+        System.out.println("2. Player must land exactly on END position to win");
+        System.out.println("3. Player will be sent HOME when HIT");
+        System.out.println("4. Both exact END and HIT HOME rules (Challenging mode!)");
         
         while (true) {
-            System.out.print("Enter your choices (e.g., '1 2' for both rules, '3' for basic rules): ");
+            System.out.print("Enter your choice (1-4): ");
             String input = scanner.nextLine();
             
-            if (input.contains("3")) {
+            if (input.equals("1")) {
                 return new String[]{};
-            }
-            
-            String[] choices = input.split("\\s+");
-            String[] rules = new String[choices.length];
-            
-            boolean validChoices = true;
-            for (int i = 0; i < choices.length; i++) {
-                if (choices[i].equals("1")) {
-                    rules[i] = "exactEnd";
-                } else if (choices[i].equals("2")) {
-                    rules[i] = "hitHome";
-                } else {
-                    validChoices = false;
-                    break;
-                }
-            }
-            
-            if (validChoices) {
-                return rules;
+            } else if (input.equals("2")) {
+                return new String[]{"exactEnd"};
+            } else if (input.equals("3")) {
+                return new String[]{"hitHome"};
+            } else if (input.equals("4")) {
+                return new String[]{"exactEnd", "hitHome"};
             } else {
-                System.out.println("Invalid choices. Please try again.");
+                System.out.println("Invalid choice. Please try again.");
             }
         }
     }
