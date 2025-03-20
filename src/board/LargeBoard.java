@@ -60,6 +60,12 @@ public class LargeBoard implements IBoard {
             return newPosition;
         }
         
+        // Special case: Already at tail entry position
+        int tailEntryPos = tailEntryPositions.get(player.getColor());
+        if (currentPosition == tailEntryPos) {
+            return MAIN_BOARD_SIZE + diceRoll;
+        }
+        
         // If on the main board
         if (currentPosition <= MAIN_BOARD_SIZE) {
             // Calculate potential new position
@@ -67,9 +73,19 @@ public class LargeBoard implements IBoard {
             
             // Check if we need to enter the tail
             if (passedTailEntry(currentPosition, newPosition, player)) {
-                int overshoot = calculateOvershoot(currentPosition, player);
-                // Move into the tail by the overshoot amount
-                return MAIN_BOARD_SIZE + overshoot;
+                int distanceToTailEntry;
+                
+                // Calculate distance to tail entry point
+                if (currentPosition < tailEntryPos) {
+                    distanceToTailEntry = tailEntryPos - currentPosition;
+                } else {
+                    // We need to go around the board
+                    distanceToTailEntry = (MAIN_BOARD_SIZE - currentPosition) + tailEntryPos;
+                }
+                
+                // Calculate how many steps into the tail
+                int stepsIntoTail = diceRoll - distanceToTailEntry;
+                return MAIN_BOARD_SIZE + stepsIntoTail;
             }
             
             // Otherwise, just move on the main board, with wraparound
@@ -96,24 +112,30 @@ public class LargeBoard implements IBoard {
     private boolean passedTailEntry(int currentPosition, int newPosition, Player player) {
         int tailEntryPos = tailEntryPositions.get(player.getColor());
         
-        // Different logic needed for checking if a player passes their tail entry
-        // based on board layout
+        // Check if already at tail entry
+        if (currentPosition == tailEntryPos) {
+            return true;
+        }
+        
+        // Different logic needed depending on board layout
         if (tailEntryPos > player.getHomePosition()) {
             // Tail entry is after home position
-            return (currentPosition <= tailEntryPos && newPosition > tailEntryPos);
+            return (currentPosition < tailEntryPos && newPosition >= tailEntryPos);
         } else {
-            // Tail entry is before home position, might involve wrap around
-            return (currentPosition <= tailEntryPos && newPosition > tailEntryPos) || 
-                   (currentPosition > tailEntryPos && newPosition > MAIN_BOARD_SIZE);
+            // Tail entry is before home position (might involve wrap around)
+            if (currentPosition < tailEntryPos) {
+                // Simple case - we pass the tail entry without wrapping
+                return newPosition >= tailEntryPos;
+            } else {
+                // We need to handle wrap-around
+                int wrappedPosition = (newPosition - 1) % MAIN_BOARD_SIZE + 1;
+                return wrappedPosition >= player.getHomePosition() && 
+                       wrappedPosition <= tailEntryPos;
+            }
         }
     }
     
-    private int calculateOvershoot(int currentPosition, Player player) {
-        int tailEntryPos = tailEntryPositions.get(player.getColor());
-        
-        // Calculate how far past the tail entry the player would move
-        return Math.abs(currentPosition - tailEntryPos);
-    }
+    // Note: This method was removed as its logic has been inlined into calculateNewPosition
     
     @Override
     public int getMainBoardSize() {

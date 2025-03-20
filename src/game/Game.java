@@ -122,8 +122,8 @@ public class Game {
             observer.onMove(currentPlayer, oldPosition, newPosition, totalRoll);
         }
         
-        // Check for a hit (if we're not at the end)
-        if (newPosition != currentPlayer.getEndPosition()) {
+        // Check for a hit (if we're not at the end and not in the tail)
+        if (newPosition != currentPlayer.getEndPosition() && newPosition <= board.getMainBoardSize()) {
             Player victim = playerManager.getPlayerAtPosition(newPosition, currentPlayer);
             if (victim != null) {
                 // Save state just before processing hit so that undo restores pre-hit state
