@@ -12,6 +12,7 @@ import rules.ExactEndRule;
 import rules.HitHomeRule;
 import rules.RuleStrategy;
 import undo.GameHistory;
+import undo.GameStateMemento;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,15 +89,23 @@ public class Game {
         }
         
         Player currentPlayer = playerManager.getCurrentPlayer();
+
+        // Save the current state BEFORE any move is made
+        gameHistory.saveState(
+            playerManager.getAllPlayers(),
+            playerManager.getCurrentPlayerIndex(),
+            lastMoveWasHit,
+            lastHitVictim,
+            gameOver,
+            (winner != null ? winner.getColor() : null)
+        );
         
-        // Save the current state before making any changes
+        // Reset hit tracking for the new turn
         lastMoveWasHit = false;
         lastHitVictim = null;
-        // Pass the current player index to save state
-        gameHistory.saveState(playerManager.getAllPlayers(), playerManager.getCurrentPlayerIndex(), false, null);
         
         // Roll the dice
-        int[] rollValues = dice.roll();
+        dice.roll();
         int totalRoll = dice.getTotal();
         
         // Save the old position
@@ -117,6 +126,15 @@ public class Game {
         if (newPosition != currentPlayer.getEndPosition()) {
             Player victim = playerManager.getPlayerAtPosition(newPosition, currentPlayer);
             if (victim != null) {
+                // Save state just before processing hit so that undo restores pre-hit state
+                gameHistory.saveState(
+                    playerManager.getAllPlayers(),
+                    playerManager.getCurrentPlayerIndex(),
+                    false,
+                    null,
+                    gameOver,
+                    (winner != null ? winner.getColor() : null)
+                );
                 lastMoveWasHit = rules.handleHit(currentPlayer, victim, playerManager);
                 if (lastMoveWasHit) {
                     lastHitVictim = victim.getColor();
@@ -148,20 +166,35 @@ public class Game {
      * @return true if undo was successful
      */
     public boolean undo() {
-        boolean undoResult = gameHistory.undo(playerManager);
+        GameStateMemento memento = gameHistory.undo(playerManager);
         
-        if (undoResult) {
-            // Reset game over status
-            gameOver = false;
+        if (memento != null) {
+            // Restore game-over state and winner from the saved state
+            gameOver = memento.getGameOver();
+            String restoredWinnerColor = memento.getWinnerColor();
             winner = null;
+            if (restoredWinnerColor != null) {
+                for (Player player : playerManager.getAllPlayers()) {
+                    if (player.getColor().equals(restoredWinnerColor)) {
+                        winner = player;
+                        break;
+                    }
+                }
+            }
             
-            // Notify observers
+            // Restore hit-tracking state
+            lastMoveWasHit = memento.isHitOccurred();
+            lastHitVictim = memento.getHitVictimColor();
+            
+            // Notify observers of undo
             for (GameObserver observer : observers) {
                 observer.onUndo(playerManager.getCurrentPlayer());
             }
+            
+            return true;
         }
         
-        return undoResult;
+        return false;
     }
     
     /**

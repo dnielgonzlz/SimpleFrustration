@@ -25,21 +25,23 @@ public class GameHistory {
      * @param players List of all players
      * @param currentPlayerIndex Index of the current player
      * @param hitOccurred Whether a hit occurred in the last move
-     * @param hitVictimColor Color of the player who was hit (if any)
+     * @param hitVictimColor Color of the player who was hit
+     * @param gameOver Whether the game was over
+     * @param winnerColor Color of the winning player 
      */
-    public void saveState(List<Player> players, int currentPlayerIndex, boolean hitOccurred, String hitVictimColor) {
-        GameStateMemento memento = new GameStateMemento(players, currentPlayerIndex, hitOccurred, hitVictimColor);
+    public void saveState(List<Player> players, int currentPlayerIndex, boolean hitOccurred, String hitVictimColor, boolean gameOver, String winnerColor) {
+        GameStateMemento memento = new GameStateMemento(players, currentPlayerIndex, hitOccurred, hitVictimColor, gameOver, winnerColor);
         history.push(memento);
     }
     
     /**
      * Restore the previous game state
      * @param playerManager The player manager to update
-     * @return true if undo was successful, false if history is empty
+     * @return The restored GameStateMemento, or null if history is empty
      */
-    public boolean undo(PlayerManager playerManager) {
+    public GameStateMemento undo(PlayerManager playerManager) {
         if (history.isEmpty()) {
-            return false;
+            return null;
         }
         
         GameStateMemento memento = history.pop();
@@ -64,7 +66,7 @@ public class GameHistory {
         // Restore current player index
         playerManager.setCurrentPlayerIndex(memento.getCurrentPlayerIndex());
         
-        return true;
+        return memento;
     }
     
     /**

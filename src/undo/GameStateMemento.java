@@ -15,6 +15,8 @@ public class GameStateMemento {
     private final int turnCount;
     private final boolean hitOccurred;
     private final String hitVictimColor;
+    private final boolean gameOver;        
+    private final String winnerColor;      
     
     /**
      * Constructor for a game state memento
@@ -22,13 +24,17 @@ public class GameStateMemento {
      * @param currentPlayerIndex Index of the current player
      * @param hitOccurred Whether a hit occurred in the last move
      * @param hitVictimColor Color of the player who was hit (if any)
+     * @param gameOver Whether the game was over
+     * @param winnerColor Color of the winning player (if any)
      */
-    public GameStateMemento(List<Player> players, int currentPlayerIndex, boolean hitOccurred, String hitVictimColor) {
+    public GameStateMemento(List<Player> players, int currentPlayerIndex, boolean hitOccurred, String hitVictimColor, boolean gameOver, String winnerColor) {
         this.playerPositions = new HashMap<>();
         this.playerMoveCounts = new HashMap<>();
         this.currentPlayerIndex = currentPlayerIndex;
         this.hitOccurred = hitOccurred;
         this.hitVictimColor = hitVictimColor;
+        this.gameOver = gameOver;
+        this.winnerColor = winnerColor;
         
         // Calculate turn count and save player positions and move counts
         int turnCount = 0;
@@ -95,5 +101,21 @@ public class GameStateMemento {
      */
     public Map<String, Integer> getPlayerPositions() {
         return new HashMap<>(playerPositions);
+    }
+    
+    /**
+     * Check if the game was over in the saved state
+     * @return true if game was over
+     */
+    public boolean getGameOver() {
+        return gameOver;
+    }
+    
+    /**
+     * Get the winner's color from the saved state
+     * @return Winner's color or null if none
+     */
+    public String getWinnerColor() {
+        return winnerColor;
     }
 }
