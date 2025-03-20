@@ -1,5 +1,7 @@
 package game;
 
+import util.ConsoleColors;
+
 /**
  * Configuration for a game.
  */
@@ -84,9 +86,17 @@ public class GameConfig {
               .append(" Players={");
         
         if (numPlayers == 2) {
-            builder.append("Red, Blue");
+            builder.append(ConsoleColors.colorize("Red", "Red"))
+                  .append(", ")
+                  .append(ConsoleColors.colorize("Blue", "Blue"));
         } else {
-            builder.append("Red, Blue, Green, Yellow");
+            builder.append(ConsoleColors.colorize("Red", "Red"))
+                  .append(", ")
+                  .append(ConsoleColors.colorize("Blue", "Blue"))
+                  .append(", ")
+                  .append(ConsoleColors.colorize("Green", "Green"))
+                  .append(", ")
+                  .append(ConsoleColors.colorize("Yellow", "Yellow"));
         }
         
         builder.append("}\n");

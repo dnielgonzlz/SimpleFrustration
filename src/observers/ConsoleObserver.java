@@ -2,6 +2,7 @@ package observers;
 
 import board.IBoard;
 import players.Player;
+import util.ConsoleColors;
 
 /**
  * Observer that prints game events to the console.
@@ -20,28 +21,34 @@ public class ConsoleObserver implements GameObserver {
         boolean oldIsTail = oldPosition > board.getMainBoardSize();
         boolean newIsTail = newPosition > board.getMainBoardSize();
         
-        System.out.println(player.getColor() + " play " + playCount + " rolls " + diceRoll);
-        System.out.println(player.getColor() + " moves from " + 
+        String playerColor = player.getColor();
+        
+        System.out.println(ConsoleColors.colorize(playerColor + " play " + playCount + " rolls " + diceRoll, playerColor));
+        System.out.println(ConsoleColors.colorize(playerColor + " moves from " + 
                            getPositionDisplay(player, oldPosition, oldIsTail) + " to " + 
-                           getPositionDisplay(player, newPosition, newIsTail));
+                           getPositionDisplay(player, newPosition, newIsTail), playerColor));
     }
     
     @Override
     public void onHit(Player attacker, Player victim) {
-        System.out.println(victim.getColor() + " Position " + victim.getCurrentPosition() + " hit!");
-        System.out.println(victim.getColor() + " moves from Position " + 
+        String victimColor = victim.getColor();
+        
+        System.out.println(ConsoleColors.colorize(victimColor + " Position " + victim.getCurrentPosition() + " hit!", victimColor));
+        System.out.println(ConsoleColors.colorize(victimColor + " moves from Position " + 
                            victim.getCurrentPosition() + " to HOME (Position " + 
-                           victim.getHomePosition() + ")");
+                           victim.getHomePosition() + ")", victimColor));
     }
     
     @Override
     public void onOvershoot(Player player) {
-        System.out.println(player.getColor() + " overshoots!");
+        String playerColor = player.getColor();
+        System.out.println(ConsoleColors.colorize(playerColor + " overshoots!", playerColor));
     }
     
     @Override
     public void onWin(Player winner, int totalTurns) {
-        System.out.println(winner.getColor() + " wins in " + winner.getTotalMoves() + " moves!");
+        String winnerColor = winner.getColor();
+        System.out.println(ConsoleColors.colorize(winnerColor + " wins in " + winner.getTotalMoves() + " moves!", winnerColor));
         System.out.println("Total plays " + totalTurns);
     }
     

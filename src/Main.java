@@ -1,6 +1,7 @@
 import game.Game;
 import game.GameConfig;
 import observers.ConsoleObserver;
+import util.ConsoleColors;
 
 import java.util.Scanner;
 
@@ -75,8 +76,14 @@ public class Main {
      */
     private static int promptNumPlayers(Scanner scanner) {
         System.out.println("Select number of players:");
-        System.out.println("1. Two players (Red, Blue)");
-        System.out.println("2. Four players (Red, Blue, Green, Yellow)");
+        System.out.println("1. Two players (" + 
+                          ConsoleColors.colorize("Red", "Red") + ", " + 
+                          ConsoleColors.colorize("Blue", "Blue") + ")");
+        System.out.println("2. Four players (" + 
+                          ConsoleColors.colorize("Red", "Red") + ", " + 
+                          ConsoleColors.colorize("Blue", "Blue") + ", " + 
+                          ConsoleColors.colorize("Green", "Green") + ", " + 
+                          ConsoleColors.colorize("Yellow", "Yellow") + ")");
         
         while (true) {
             System.out.print("Enter your choice (1-2): ");

@@ -1,5 +1,7 @@
 package players;
 
+import util.ConsoleColors;
+
 /**
  * Represents a player in the game.
  */
@@ -30,6 +32,14 @@ public class Player {
      */
     public String getColor() {
         return color;
+    }
+    
+    /**
+     * Get the player's color with ANSI color formatting
+     * @return Colored text of the player's color name
+     */
+    public String getColoredDisplay() {
+        return ConsoleColors.colorize(color, color);
     }
     
     /**
