@@ -139,13 +139,8 @@ public class BasicBoard implements IBoard {
         int tailPosition = currentPosition - MAIN_BOARD_SIZE;
         int newTailPosition = tailPosition + diceRoll;
         
-        // When in the tail with basic rules, overshooting should be treated as reaching END
-        // The ExactEndRule decorator will handle bounce-back if needed
-        if (newTailPosition > TAIL_SIZE) {
-            // For basic rules, we need to set position to END
-            return MAIN_BOARD_SIZE + TAIL_SIZE; // END position
-        }
-        
+        // Return the actual new position even if it overshoots the END
+        // This allows the ExactEndRule decorator to handle bounce-back if needed
         return MAIN_BOARD_SIZE + newTailPosition;
     }
     

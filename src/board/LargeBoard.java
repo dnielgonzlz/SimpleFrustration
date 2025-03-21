@@ -138,14 +138,8 @@ public class LargeBoard implements IBoard {
         int tailPosition = currentPosition - MAIN_BOARD_SIZE;
         int newTailPosition = tailPosition + diceRoll;
         
-        // Check if we went beyond END (tail overflow)
-        if (newTailPosition > TAIL_SIZE) {
-            // Calculate bounce back
-            int bounceBack = newTailPosition - TAIL_SIZE;
-            System.out.println("Player overshoots END by " + bounceBack + " position(s) and bounces back!");
-            return MAIN_BOARD_SIZE + TAIL_SIZE - bounceBack;
-        }
-        
+        // Return the actual new position even if it overshoots the END
+        // This allows the ExactEndRule decorator to handle bounce-back if needed
         return MAIN_BOARD_SIZE + newTailPosition;
     }
     
