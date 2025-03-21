@@ -50,7 +50,7 @@ public class Game {
     public void startGame(GameConfig config) {
         // Create board
         BoardFactory boardFactory = new BoardFactory();
-        this.board = boardFactory.createBoard(config.getBoardSize());
+        this.board = boardFactory.createBoard(config.getBoardSize(), config.getNumPlayers());
         
         // Create dice
         DiceFactory diceFactory = new DiceFactory();

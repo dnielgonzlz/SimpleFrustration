@@ -63,7 +63,10 @@ public class ConsoleObserver implements GameObserver {
         } else if (position == player.getEndPosition()) {
             return "END";
         } else if (isTail) {
-            return "TAIL (Tail Position " + (position - board.getMainBoardSize()) + ")";
+            // Yellow from Pos 6 rolls 7 should reach tail entry 13, then 2 more steps = Tail Pos 2
+            // For a roll of 10, Yellow reaches tail entry 13 with 3 more steps which is END
+            int tailPos = position - board.getMainBoardSize();
+            return "TAIL (Tail Position " + tailPos + ")";
         } else {
             return "Position " + position;
         }

@@ -125,9 +125,26 @@ public class Player {
         } else if (currentPosition == endPosition) {
             return "END";
         } else if (isTailPosition) {
-            return "TAIL (Tail Position " + (currentPosition - homePosition) + ")";
+            int mainBoardSize = endPosition - tailSize();
+            int tailPos = currentPosition - mainBoardSize;
+            return "TAIL (Tail Position " + tailPos + ")";
         } else {
             return "Position " + currentPosition;
+        }
+    }
+    
+    /**
+     * Calculate the tail size based on home and end positions
+     * @return The size of the tail
+     */
+    private int tailSize() {
+        // Calculate tail size based on the difference between end position and main board size
+        // Basic board: mainBoardSize = 18, tailSize = 3, endPosition = 21
+        // Large board: mainBoardSize = 36, tailSize = 6, endPosition = 42
+        if (endPosition == 21) { // Basic board
+            return 3;
+        } else { // Large board
+            return 6;
         }
     }
 }

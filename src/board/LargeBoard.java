@@ -8,6 +8,7 @@ import java.util.Map;
  * Implementation of the large board (36 positions, 6 tail slots).
  */
 public class LargeBoard implements IBoard {
+    private int numPlayers = 2; // Default to 2 players
     private static final int MAIN_BOARD_SIZE = 36;
     private static final int TAIL_SIZE = 6; // Including END position
     
@@ -17,19 +18,40 @@ public class LargeBoard implements IBoard {
     private final Map<String, Integer> tailEntryPositions;
     
     public LargeBoard() {
+        this(2); // Default constructor with 2 players
+    }
+    
+    /**
+     * Constructor that specifies the number of players
+     * @param numPlayers Number of players (2 or 4)
+     */
+    public LargeBoard(int numPlayers) {
+        this.numPlayers = numPlayers;
         // Initialize home positions
         homePositions = new HashMap<>();
-        homePositions.put("Red", 1);
-        homePositions.put("Blue", 19);
-        homePositions.put("Green", 10); // For 4-player support
-        homePositions.put("Yellow", 28); // For 4-player support
+        homePositions.put("Red", 1); // Always position 1
+        
+        // Position depends on number of players
+        if (numPlayers == 4) {
+            homePositions.put("Blue", 10);
+            homePositions.put("Green", 19);
+            homePositions.put("Yellow", 27);
+        } else {
+            homePositions.put("Blue", 19);
+        }
         
         // Initialize tail entry positions (position before home)
         tailEntryPositions = new HashMap<>();
         tailEntryPositions.put("Red", 36); // Position before home position 1
-        tailEntryPositions.put("Blue", 18); // Position before home position 19
-        tailEntryPositions.put("Green", 9); // Position before home position 10
-        tailEntryPositions.put("Yellow", 27); // Position before home position 28
+        
+        // Tail entries also depend on number of players
+        if (numPlayers == 4) {
+            tailEntryPositions.put("Blue", 9);  // Position before home position 10
+            tailEntryPositions.put("Green", 18); // Position before home position 19
+            tailEntryPositions.put("Yellow", 26); // Position before home position 27
+        } else {
+            tailEntryPositions.put("Blue", 18); // Position before home position 19
+        }
     }
     
     @Override
@@ -39,7 +61,16 @@ public class LargeBoard implements IBoard {
         } else if (position == player.getEndPosition()) {
             return PositionType.END;
         } else if (position > MAIN_BOARD_SIZE) { // Position is in tail
-            return PositionType.TAIL;
+            // For tail positions, we need to check if this is the player's tail
+            int tailOffset = position - MAIN_BOARD_SIZE;
+            // Calculate expected end position based on player's home position
+            int expectedEndPos = MAIN_BOARD_SIZE + TAIL_SIZE;
+            if (player.getEndPosition() == expectedEndPos) {
+                return PositionType.TAIL;
+            } else {
+                // Player is in another player's tail
+                return PositionType.MAIN;
+            }
         } else {
             return PositionType.MAIN;
         }
@@ -73,9 +104,9 @@ public class LargeBoard implements IBoard {
             
             // Check if we need to enter the tail
             if (passedTailEntry(currentPosition, newPosition, player)) {
+                // Calculate distance to tail entry
                 int distanceToTailEntry;
                 
-                // Calculate distance to tail entry point
                 if (currentPosition < tailEntryPos) {
                     distanceToTailEntry = tailEntryPos - currentPosition;
                 } else {
@@ -83,8 +114,16 @@ public class LargeBoard implements IBoard {
                     distanceToTailEntry = (MAIN_BOARD_SIZE - currentPosition) + tailEntryPos;
                 }
                 
-                // Calculate how many steps into the tail
+                // Calculate steps into tail (dice roll minus steps to reach tail entry)
                 int stepsIntoTail = diceRoll - distanceToTailEntry;
+                
+                // Ensure at least 1 step into tail
+                stepsIntoTail = Math.max(stepsIntoTail, 1);
+                
+                // Cannot go beyond END (tail position TAIL_SIZE)
+                stepsIntoTail = Math.min(stepsIntoTail, TAIL_SIZE);
+                
+                // Position in tail
                 return MAIN_BOARD_SIZE + stepsIntoTail;
             }
             
@@ -103,6 +142,7 @@ public class LargeBoard implements IBoard {
         if (newTailPosition > TAIL_SIZE) {
             // Calculate bounce back
             int bounceBack = newTailPosition - TAIL_SIZE;
+            System.out.println("Player overshoots END by " + bounceBack + " position(s) and bounces back!");
             return MAIN_BOARD_SIZE + TAIL_SIZE - bounceBack;
         }
         
@@ -117,20 +157,38 @@ public class LargeBoard implements IBoard {
             return true;
         }
         
-        // Different logic needed depending on board layout
-        if (tailEntryPos > player.getHomePosition()) {
-            // Tail entry is after home position
-            return (currentPosition < tailEntryPos && newPosition >= tailEntryPos);
-        } else {
-            // Tail entry is before home position (might involve wrap around)
-            if (currentPosition < tailEntryPos) {
-                // Simple case - we pass the tail entry without wrapping
-                return newPosition >= tailEntryPos;
+        // If we're moving to a position less than or equal to the main board size,
+        // check if we passed the tail entry during movement
+        if (newPosition <= MAIN_BOARD_SIZE) {
+            // Handle normal movement on main board
+            // Check if we passed the tail entry position during this move
+            if (tailEntryPos > player.getHomePosition()) {
+                // Tail entry is after home position
+                return (currentPosition < tailEntryPos && newPosition >= tailEntryPos);
             } else {
-                // We need to handle wrap-around
-                int wrappedPosition = (newPosition - 1) % MAIN_BOARD_SIZE + 1;
-                return wrappedPosition >= player.getHomePosition() && 
-                       wrappedPosition <= tailEntryPos;
+                // Tail entry is before home position (wrap around case)
+                if (currentPosition < tailEntryPos) {
+                    // Simple case - we pass the tail entry without wrapping
+                    return newPosition >= tailEntryPos;
+                } else {
+                    // Check if we've wrapped around and passed the tail entry
+                    int wrappedPosition = (newPosition - 1) % MAIN_BOARD_SIZE + 1;
+                    return wrappedPosition >= player.getHomePosition() && 
+                           wrappedPosition <= tailEntryPos;
+                }
+            }
+        } else {
+            // If new position is beyond main board size, we need special handling
+            // First normalize the position to its wrapped equivalent
+            int wrappedPosition = (newPosition - 1) % MAIN_BOARD_SIZE + 1;
+            
+            // Now check if we would have passed the tail entry
+            if (tailEntryPos > player.getHomePosition()) {
+                return (currentPosition < tailEntryPos && wrappedPosition >= tailEntryPos) || 
+                       (currentPosition > wrappedPosition);
+            } else {
+                return (currentPosition < tailEntryPos && wrappedPosition >= tailEntryPos) || 
+                       (currentPosition > tailEntryPos && wrappedPosition >= player.getHomePosition());
             }
         }
     }
