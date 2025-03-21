@@ -25,6 +25,7 @@ public class Game {
     private Dice dice;
     private PlayerManager playerManager;
     private RuleStrategy rules;
+    private GameConfig config;
     private final GameHistory gameHistory;
     private final List<GameObserver> observers;
     private boolean gameOver;
@@ -48,6 +49,9 @@ public class Game {
      * @param config Game configuration
      */
     public void startGame(GameConfig config) {
+        // Store the config
+        this.config = config;
+        
         // Create board
         BoardFactory boardFactory = new BoardFactory();
         this.board = boardFactory.createBoard(config.getBoardSize(), config.getNumPlayers());
@@ -89,6 +93,11 @@ public class Game {
         }
         
         Player currentPlayer = playerManager.getCurrentPlayer();
+        
+        System.out.println("\n[DEBUG Game] === Starting turn for " + currentPlayer.getColor() + " player ===");
+        System.out.println("[DEBUG Game] Current position: " + currentPlayer.getCurrentPosition() + 
+                         ", Home: " + currentPlayer.getHomePosition() + 
+                         ", End: " + currentPlayer.getEndPosition());
 
         // Save the current state BEFORE any move is made
         gameHistory.saveState(
@@ -107,12 +116,14 @@ public class Game {
         // Roll the dice
         dice.roll();
         int totalRoll = dice.getTotal();
+        System.out.println("[DEBUG Game] Dice roll: " + totalRoll);
         
         // Save the old position
         int oldPosition = currentPlayer.getCurrentPosition();
         
         // Calculate the new position according to the rules
         int newPosition = rules.handleMovement(currentPlayer, totalRoll, board);
+        System.out.println("[DEBUG Game] Final calculated position after rules: " + newPosition);
         
         // Move the player
         currentPlayer.move(newPosition);
@@ -126,6 +137,9 @@ public class Game {
         if (newPosition != currentPlayer.getEndPosition() && newPosition <= board.getMainBoardSize()) {
             Player victim = playerManager.getPlayerAtPosition(newPosition, currentPlayer);
             if (victim != null) {
+                System.out.println("[DEBUG Game] Potential hit at position " + newPosition + 
+                                 " with player " + victim.getColor());
+                
                 // Save state just before processing hit so that undo restores pre-hit state
                 gameHistory.saveState(
                     playerManager.getAllPlayers(),
@@ -138,6 +152,7 @@ public class Game {
                 lastMoveWasHit = rules.handleHit(currentPlayer, victim, playerManager);
                 if (lastMoveWasHit) {
                     lastHitVictim = victim.getColor();
+                    System.out.println("[DEBUG Game] Hit occurred. Victim: " + victim.getColor());
                     for (GameObserver observer : observers) {
                         observer.onHit(currentPlayer, victim);
                     }
@@ -147,18 +162,37 @@ public class Game {
         
         // Check for a win
         if (newPosition == currentPlayer.getEndPosition()) {
+            System.out.println("[DEBUG Game] Player reached END position exactly. Game over!");
             gameOver = true;
             winner = currentPlayer;
             
             for (GameObserver observer : observers) {
                 observer.onWin(winner, playerManager.getTotalTurns());
             }
+        } else if (newPosition > currentPlayer.getEndPosition() && 
+                   !config.hasRule("exactEnd") && 
+                   newPosition > board.getMainBoardSize()) {
+            // For Basic Rule: Also win if position is beyond END and we're in a tail
+            System.out.println("[DEBUG Game] Player passed END position with Basic Rule. Game over!");
+            gameOver = true;
+            winner = currentPlayer;
+            
+            for (GameObserver observer : observers) {
+                observer.onWin(winner, playerManager.getTotalTurns());
+            }
+        } else {
+            System.out.println("[DEBUG Game] Player did not reach END position (" + 
+                             currentPlayer.getEndPosition() + "), currently at: " + newPosition);
         }
         
         // Switch to the next player if game is not over
         if (!gameOver) {
             playerManager.switchPlayer();
+            System.out.println("[DEBUG Game] Next player: " + 
+                             playerManager.getCurrentPlayer().getColor());
         }
+        
+        System.out.println("[DEBUG Game] === End of turn ===\n");
     }
     
     /**

@@ -20,17 +20,31 @@ public class ExactEndRule implements RuleStrategy {
     
     @Override
     public int handleMovement(Player player, int diceRoll, IBoard board) {
+        System.out.println("[DEBUG ExactEndRule] Handling movement for " + player.getColor() + 
+                         " from position " + player.getCurrentPosition() + 
+                         " with dice roll " + diceRoll);
+        
         int newPosition = baseRule.handleMovement(player, diceRoll, board);
+        
+        System.out.println("[DEBUG ExactEndRule] Base rule calculated new position: " + newPosition + 
+                         " (Player end position is " + player.getEndPosition() + ")");
         
         // If the new position is past the END position, bounce back
         if (newPosition == player.getEndPosition()) {
+            System.out.println("[DEBUG ExactEndRule] Exact landing on END position. Return: " + newPosition);
             return newPosition; // Exact landing on END
         } else if (newPosition > player.getEndPosition()) {
             // Calculate bounce back distance
             int overshoot = newPosition - player.getEndPosition();
-            return player.getEndPosition() - overshoot;
+            int bouncePosition = player.getEndPosition() - overshoot;
+            
+            System.out.println("[DEBUG ExactEndRule] Overshoot detected. Overshoot distance: " + overshoot);
+            System.out.println("[DEBUG ExactEndRule] Bouncing back to position: " + bouncePosition);
+            
+            return bouncePosition;
         }
         
+        System.out.println("[DEBUG ExactEndRule] No overshoot or exact landing. Return: " + newPosition);
         return newPosition;
     }
     
