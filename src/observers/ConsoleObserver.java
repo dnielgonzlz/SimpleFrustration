@@ -32,7 +32,7 @@ public class ConsoleObserver implements GameObserver {
     @Override
     public void onHit(Player attacker, Player victim, int victimOriginalPosition) {
         String victimColor = victim.getColor();
-        int hitPosition = attacker.getCurrentPosition(); // This is where the hit occurred
+        int hitPosition = attacker.getCurrentPosition();
         
         System.out.println("[DEBUG Observer] HIT event: " + attacker.getColor() + 
                           " hit " + victimColor + 
@@ -74,7 +74,7 @@ public class ConsoleObserver implements GameObserver {
                                victimColor));
             
             // For the attacker: Current Position -> Previous Position
-            // Note: After an undo, player.getCurrentPosition() will be where they were before hitting
+            // After an undo, player.getCurrentPosition() will be where they were before hitting
             String attackerColor = player.getColor();
             boolean attackerIsTail = player.getCurrentPosition() > board.getMainBoardSize();
             
@@ -91,8 +91,6 @@ public class ConsoleObserver implements GameObserver {
         } else if (position == player.getEndPosition()) {
             return "END";
         } else if (isTail) {
-            // Yellow from Pos 6 rolls 7 should reach tail entry 13, then 2 more steps = Tail Pos 2
-            // For a roll of 10, Yellow reaches tail entry 13 with 3 more steps which is END
             int tailPos = position - board.getMainBoardSize();
             return "TAIL (Tail Position " + tailPos + ")";
         } else {

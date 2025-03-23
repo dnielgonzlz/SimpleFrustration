@@ -101,7 +101,6 @@ public class GameConfig {
         
         builder.append("}\n");
         
-        // Add rule descriptions
         if (hasRule("exactEnd")) {
             builder.append("Player must land exactly on the END position to win\n");
         } else {
@@ -113,8 +112,7 @@ public class GameConfig {
         } else {
             builder.append("HITS are ignored, multiple players can occupy the same position\n");
         }
-        
-        // Add dice description
+
         builder.append("Dice: ");
         if ("single".equalsIgnoreCase(diceType)) {
             builder.append("Single random 6 sided die");

@@ -14,7 +14,7 @@ public class BasicBoard implements IBoard {
     private final Map<String, Integer> tailEntryPositions;
     
     public BasicBoard() {
-        this(2); // Default constructor with 2 players
+        this(2);
     }
     
     /**
@@ -23,12 +23,12 @@ public class BasicBoard implements IBoard {
      */
     public BasicBoard(int numPlayers) {
         this.numPlayers = numPlayers;
+
         homePositions = new HashMap<>();
         tailEntryPositions = new HashMap<>();
         
-        // Initialize base positions for Red that are same in both cases
         homePositions.put("Red", 1);
-        tailEntryPositions.put("Red", 18); // Position before home position 1
+        tailEntryPositions.put("Red", 18); 
         
         switch(numPlayers) {
             case 4:

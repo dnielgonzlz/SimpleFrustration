@@ -68,12 +68,35 @@ public class Position {
         return type == IBoard.PositionType.MAIN;
     }
     
+    /**
+     * Checks if two Position objects are equal by comparing their values and types
+     * @param o The object to compare with
+     * @return true if the objects have the same value and type, false otherwise
+     */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Position position = (Position) o;
-        return value == position.value && type == position.type;
+        // First check if we're comparing the same object
+        if (o == this) {
+            return true;
+        }
+        
+        // Make sure the other object exists and is a Position
+        if (o == null) {
+            return false;
+        }
+        if (!(o instanceof Position)) {
+            return false;
+        }
+        
+        Position other = (Position) o;
+        if (this.value != other.value) {
+            return false;
+        }
+        if (this.type != other.type) {
+            return false;
+        }
+        
+        return true;
     }
     
     @Override

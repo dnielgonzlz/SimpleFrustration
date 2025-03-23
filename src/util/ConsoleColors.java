@@ -36,7 +36,7 @@ public class ConsoleColors {
                 ansiColor = YELLOW;
                 break;
             default:
-                return text; // Return uncolored text if color not recognized
+                return text;
         }
         
         return ansiColor + text + RESET;

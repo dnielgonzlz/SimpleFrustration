@@ -10,15 +10,14 @@ import java.util.Map;
 public class LargeBoard implements IBoard {
     private int numPlayers = 2; // Default to 2 players
     private static final int MAIN_BOARD_SIZE = 36;
-    private static final int TAIL_SIZE = 6; // Including END position
+    private static final int TAIL_SIZE = 6;
     
-    // Map to store home positions for each player color
+
     private final Map<String, Integer> homePositions;
-    // Map to store tail entry positions for each player color
     private final Map<String, Integer> tailEntryPositions;
     
     public LargeBoard() {
-        this(2); // Default constructor with 2 players
+        this(2);
     }
     
     /**
@@ -27,53 +26,55 @@ public class LargeBoard implements IBoard {
      */
     public LargeBoard(int numPlayers) {
         this.numPlayers = numPlayers;
-        // Initialize home positions
+
         homePositions = new HashMap<>();
-        homePositions.put("Red", 1); // Always position 1
-        
-        // Position depends on number of players
-        if (numPlayers == 4) {
-            homePositions.put("Blue", 10);
-            homePositions.put("Green", 19);
-            homePositions.put("Yellow", 27);
-        } else {
-            homePositions.put("Blue", 19);
-        }
-        
-        // Initialize tail entry positions (position before home)
         tailEntryPositions = new HashMap<>();
-        tailEntryPositions.put("Red", 36); // Position before home position 1
+
+
+        homePositions.put("Red", 1);
+        tailEntryPositions.put("Red", 36);
         
-        // Tail entries also depend on number of players
-        if (numPlayers == 4) {
-            tailEntryPositions.put("Blue", 9);  // Position before home position 10
-            tailEntryPositions.put("Green", 18); // Position before home position 19
-            tailEntryPositions.put("Yellow", 26); // Position before home position 27
-        } else {
-            tailEntryPositions.put("Blue", 18); // Position before home position 19
+        switch(numPlayers) {
+            case 4:
+                homePositions.put("Blue", 10);
+                homePositions.put("Green", 19); 
+                homePositions.put("Yellow", 27);
+                
+                tailEntryPositions.put("Blue", 9);  
+                tailEntryPositions.put("Green", 18); 
+                tailEntryPositions.put("Yellow", 26); 
+                
+                break;
+            case 2:
+                // Initialize positions for 2 player game
+                homePositions.put("Blue", 19);
+                tailEntryPositions.put("Blue", 18); 
+                break;
+                
+            default:
+                throw new IllegalArgumentException("Number of players must be 2 or 4");
         }
     }
     
     @Override
     public PositionType getPositionType(int position, Player player) {
+        // Check special positions first
         if (position == player.getHomePosition()) {
             return PositionType.HOME;
-        } else if (position == player.getEndPosition()) {
-            return PositionType.END;
-        } else if (position > MAIN_BOARD_SIZE) { // Position is in tail
-            // For tail positions, we need to check if this is the player's tail
-            int tailOffset = position - MAIN_BOARD_SIZE;
-            // Calculate expected end position based on player's home position
-            int expectedEndPos = MAIN_BOARD_SIZE + TAIL_SIZE;
-            if (player.getEndPosition() == expectedEndPos) {
-                return PositionType.TAIL;
-            } else {
-                // Player is in another player's tail
-                return PositionType.MAIN;
-            }
-        } else {
-            return PositionType.MAIN;
         }
+        
+        if (position == player.getEndPosition()) {
+            return PositionType.END;
+        }
+        
+        // Check if position is in a tail section
+        if (position > MAIN_BOARD_SIZE) {
+            // Only return TAIL if this is the player's own tail section
+            return (player.getEndPosition() == MAIN_BOARD_SIZE + TAIL_SIZE) ? PositionType.TAIL : PositionType.MAIN;
+        }
+        
+        // Default case - position is on main board
+        return PositionType.MAIN;
     }
     
     @Override
@@ -94,7 +95,7 @@ public class LargeBoard implements IBoard {
         }
         
         if (currentPosition == tailEntryPos) {
-            return MAIN_BOARD_SIZE + 1; // Enter tail directly
+            return MAIN_BOARD_SIZE + 1;
         }
         
         if (currentPosition <= MAIN_BOARD_SIZE) {
