@@ -79,82 +79,78 @@ public class LargeBoard implements IBoard {
     @Override
     public int calculateNewPosition(Player player, int diceRoll) {
         int currentPosition = player.getCurrentPosition();
-        int newPosition = currentPosition;
+        int tailEntryPos = tailEntryPositions.get(player.getColor());
         
         System.out.println("[DEBUG LargeBoard] Calculating new position for " + player.getColor() + 
                          " from position " + currentPosition + 
                          " with dice roll " + diceRoll);
         System.out.println("[DEBUG LargeBoard] Player home: " + player.getHomePosition() + 
                          ", end: " + player.getEndPosition() + 
-                         ", tail entry: " + tailEntryPositions.get(player.getColor()));
-        
-        // If at home, just move directly by dice roll
+                         ", tail entry: " + tailEntryPos);
+
+        // Handle different position cases
         if (currentPosition == player.getHomePosition()) {
-            newPosition = currentPosition + diceRoll;
-            // Wrap around the board if needed
-            if (newPosition > MAIN_BOARD_SIZE) {
-                newPosition = (newPosition - 1) % MAIN_BOARD_SIZE + 1;
-            }
-            System.out.println("[DEBUG LargeBoard] Moving from HOME. New position: " + newPosition);
-            return newPosition;
+            return calculateMoveFromHome(currentPosition, diceRoll);
         }
         
-        // Special case: Already at tail entry position
-        int tailEntryPos = tailEntryPositions.get(player.getColor());
         if (currentPosition == tailEntryPos) {
-            // Enter the tail directly with 1 step
-            System.out.println("[DEBUG LargeBoard] At tail entry position. Moving into tail position " + (MAIN_BOARD_SIZE + 1));
-            return MAIN_BOARD_SIZE + 1;
+            return MAIN_BOARD_SIZE + 1; // Enter tail directly
         }
         
-        // If on the main board
         if (currentPosition <= MAIN_BOARD_SIZE) {
-            // Calculate potential new position
-            newPosition = currentPosition + diceRoll;
-            System.out.println("[DEBUG LargeBoard] Initial calculation on main board: " + newPosition);
-            
-            // Check if we need to enter the tail
-            if (passedTailEntry(currentPosition, newPosition, player)) {
-                // Calculate distance to tail entry
-                int distanceToTailEntry;
-                
-                if (currentPosition < tailEntryPos) {
-                    distanceToTailEntry = tailEntryPos - currentPosition;
-                } else {
-                    // We need to go around the board
-                    distanceToTailEntry = (MAIN_BOARD_SIZE - currentPosition) + tailEntryPos;
-                }
-                
-                // Calculate steps into tail (dice roll minus steps to reach tail entry)
-                int stepsIntoTail = diceRoll - distanceToTailEntry;
-                
-                // Ensure at least 1 step into tail
-                stepsIntoTail = Math.max(stepsIntoTail, 1);
-                
-                // Cannot go beyond END (tail position TAIL_SIZE)
-                // But still calculate and return the actual position to let rules handle it
-                int cappedStepsIntoTail = Math.min(stepsIntoTail, TAIL_SIZE);
-                
-                // Position in tail - allow overshooting for ExactEndRule to handle
-                newPosition = MAIN_BOARD_SIZE + stepsIntoTail;
-                System.out.println("[DEBUG LargeBoard] Passed tail entry. Distance to tail: " + distanceToTailEntry + 
-                                 ", Steps into tail: " + stepsIntoTail + 
-                                 ", Capped steps: " + cappedStepsIntoTail +
-                                 ", New position in tail: " + newPosition);
-                return newPosition;
-            }
-            
-            // Otherwise, just move on the main board, with wraparound
-            if (newPosition > MAIN_BOARD_SIZE) {
-                int oldPos = newPosition;
-                newPosition = (newPosition - 1) % MAIN_BOARD_SIZE + 1;
-                System.out.println("[DEBUG LargeBoard] Wrapped around board from " + oldPos + " to " + newPosition);
-            }
-            System.out.println("[DEBUG LargeBoard] Final position on main board: " + newPosition);
-            return newPosition;
+            return calculateMainBoardMove(currentPosition, diceRoll, player, tailEntryPos);
         }
         
-        // If already in the tail
+        return calculateTailMove(currentPosition, diceRoll);
+    }
+    
+    private int calculateMoveFromHome(int currentPosition, int diceRoll) {
+        int newPosition = currentPosition + diceRoll;
+        if (newPosition > MAIN_BOARD_SIZE) {
+            newPosition = (newPosition - 1) % MAIN_BOARD_SIZE + 1;
+        }
+        System.out.println("[DEBUG LargeBoard] Moving from HOME. New position: " + newPosition);
+        return newPosition;
+    }
+    
+    private int calculateMainBoardMove(int currentPosition, int diceRoll, Player player, int tailEntryPos) {
+        int newPosition = currentPosition + diceRoll;
+        System.out.println("[DEBUG LargeBoard] Initial calculation on main board: " + newPosition);
+        
+        if (passedTailEntry(currentPosition, newPosition, player)) {
+            return calculateTailEntryMove(currentPosition, diceRoll, tailEntryPos);
+        }
+        
+        // Handle wraparound on main board
+        if (newPosition > MAIN_BOARD_SIZE) {
+            int oldPos = newPosition;
+            newPosition = (newPosition - 1) % MAIN_BOARD_SIZE + 1;
+            System.out.println("[DEBUG LargeBoard] Wrapped around board from " + oldPos + " to " + newPosition);
+        }
+        
+        System.out.println("[DEBUG LargeBoard] Final position on main board: " + newPosition);
+        return newPosition;
+    }
+    
+    private int calculateTailEntryMove(int currentPosition, int diceRoll, int tailEntryPos) {
+        int distanceToTailEntry;
+        
+        if (currentPosition < tailEntryPos) {
+            distanceToTailEntry = tailEntryPos - currentPosition;
+        } else {
+            distanceToTailEntry = (MAIN_BOARD_SIZE - currentPosition) + tailEntryPos;
+        }
+        
+        int stepsIntoTail = Math.max(diceRoll - distanceToTailEntry, 1);
+        int newPosition = MAIN_BOARD_SIZE + stepsIntoTail;
+        
+        System.out.println("[DEBUG LargeBoard] Passed tail entry. Distance to tail: " + distanceToTailEntry + 
+                         ", Steps into tail: " + stepsIntoTail + 
+                         ", New position in tail: " + newPosition);
+        return newPosition;
+    }
+    
+    private int calculateTailMove(int currentPosition, int diceRoll) {
         int tailPosition = currentPosition - MAIN_BOARD_SIZE;
         int newTailPosition = tailPosition + diceRoll;
         int finalPosition = MAIN_BOARD_SIZE + newTailPosition;
@@ -162,11 +158,7 @@ public class LargeBoard implements IBoard {
         System.out.println("[DEBUG LargeBoard] Moving in tail from tail position " + tailPosition + 
                          " to tail position " + newTailPosition + 
                          " (actual position " + finalPosition + ")");
-        System.out.println("[DEBUG LargeBoard] END position is " + player.getEndPosition() + 
-                         ", max valid tail position is " + TAIL_SIZE);
         
-        // Return the actual new position even if it overshoots the END
-        // This allows the ExactEndRule decorator to handle bounce-back if needed
         return finalPosition;
     }
     
@@ -231,8 +223,6 @@ public class LargeBoard implements IBoard {
             return passed;
         }
     }
-    
-    // Note: This method was removed as its logic has been inlined into calculateNewPosition
     
     @Override
     public int getMainBoardSize() {
