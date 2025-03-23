@@ -4,9 +4,6 @@ import players.Player;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Implementation of the basic board (18 positions, 3 tail slots).
- */
 public class BasicBoard implements IBoard {
     private int numPlayers = 2; // Default to 2 players
     private static final int MAIN_BOARD_SIZE = 18;
@@ -26,31 +23,33 @@ public class BasicBoard implements IBoard {
      */
     public BasicBoard(int numPlayers) {
         this.numPlayers = numPlayers;
-        // Initialize home positions
         homePositions = new HashMap<>();
-        homePositions.put("Red", 1); // Always position 1
-        
-        // Blue position depends on number of players
-        if (numPlayers == 4) {
-            homePositions.put("Blue", 5);
-            homePositions.put("Green", 10);
-            homePositions.put("Yellow", 14);
-        } else {
-            homePositions.put("Blue", 10);
-        }
-        
-        // Initialize tail entry positions (position before home)
         tailEntryPositions = new HashMap<>();
-        tailEntryPositions.put("Red", 18); // Position before home position 1
-        tailEntryPositions.put("Blue", 9); // Position before home position 10
         
-        // Tail entries also depend on number of players
-        if (numPlayers == 4) {
-            tailEntryPositions.put("Blue", 4);  // Position before home position 5
-            tailEntryPositions.put("Green", 9); // Position before home position 10
-            tailEntryPositions.put("Yellow", 13); // Position before home position 14
-        } else {
-            tailEntryPositions.put("Blue", 9); // Position before home position 10
+        // Initialize base positions for Red that are same in both cases
+        homePositions.put("Red", 1);
+        tailEntryPositions.put("Red", 18); // Position before home position 1
+        
+        switch(numPlayers) {
+            case 4:
+                // Initialize positions for 4 player game
+                homePositions.put("Blue", 5);
+                homePositions.put("Green", 10); 
+                homePositions.put("Yellow", 14);
+                
+                tailEntryPositions.put("Blue", 4);  // Position before home position 5
+                tailEntryPositions.put("Green", 9); // Position before home position 10
+                tailEntryPositions.put("Yellow", 13); // Position before home position 14
+                break;
+                
+            case 2:
+                // Initialize positions for 2 player game
+                homePositions.put("Blue", 10);
+                tailEntryPositions.put("Blue", 9); // Position before home position 10
+                break;
+                
+            default:
+                throw new IllegalArgumentException("Number of players must be 2 or 4");
         }
     }
     
