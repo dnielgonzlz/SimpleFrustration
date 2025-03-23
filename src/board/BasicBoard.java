@@ -55,24 +55,23 @@ public class BasicBoard implements IBoard {
     
     @Override
     public PositionType getPositionType(int position, Player player) {
+        // Check special positions first
         if (position == player.getHomePosition()) {
             return PositionType.HOME;
-        } else if (position == player.getEndPosition()) {
-            return PositionType.END;
-        } else if (position > MAIN_BOARD_SIZE) { // Position is in tail
-            // For tail positions, we need to check if this is the player's tail
-            int tailOffset = position - MAIN_BOARD_SIZE;
-            // Calculate expected end position based on player's home position
-            int expectedEndPos = MAIN_BOARD_SIZE + TAIL_SIZE;
-            if (player.getEndPosition() == expectedEndPos) {
-                return PositionType.TAIL;
-            } else {
-                // Player is in another player's tail
-                return PositionType.MAIN;
-            }
-        } else {
-            return PositionType.MAIN;
         }
+        
+        if (position == player.getEndPosition()) {
+            return PositionType.END;
+        }
+        
+        // Check if position is in a tail section
+        if (position > MAIN_BOARD_SIZE) {
+            // Only return TAIL if this is the player's own tail section
+            return (player.getEndPosition() == MAIN_BOARD_SIZE + TAIL_SIZE) ? PositionType.TAIL : PositionType.MAIN;
+        }
+        
+        // Default case - position is on main board
+        return PositionType.MAIN;
     }
     
     @Override
@@ -244,12 +243,12 @@ public class BasicBoard implements IBoard {
     }
     
     @Override
-    public int getHomePosition(String color) {
-        return homePositions.getOrDefault(color, 1); // Default to red's position
+    public int getHomePosition(String color) { 
+        return homePositions.getOrDefault(color, 1); // Red's position
     }
     
     @Override
     public int getTailEntryPosition(String color) {
-        return tailEntryPositions.getOrDefault(color, 18); // Default to red's position
+        return tailEntryPositions.getOrDefault(color, 18); // Red's position
     }
 }
