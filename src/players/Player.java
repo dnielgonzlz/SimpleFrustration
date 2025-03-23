@@ -87,6 +87,7 @@ public class Player {
      * @param newPosition The new position
      */
     public void move(int newPosition) {
+        System.out.println("[DEBUG Player] " + color + " moving from position " + currentPosition + " to " + newPosition);
         this.currentPosition = newPosition;
         this.totalMoves++;
     }
@@ -96,6 +97,7 @@ public class Player {
      * @param position The position to set
      */
     public void setPosition(int position) {
+        System.out.println("[DEBUG Player] " + color + " position directly set from " + currentPosition + " to " + position + " (undo operation)");
         this.currentPosition = position;
     }
     
@@ -103,6 +105,7 @@ public class Player {
      * Reset the player to their home position
      */
     public void resetToHome() {
+        System.out.println("[DEBUG Player] " + color + " reset from position " + currentPosition + " to HOME at position " + homePosition);
         this.currentPosition = homePosition;
     }
     

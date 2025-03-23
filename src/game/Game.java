@@ -99,12 +99,12 @@ public class Game {
                          ", Home: " + currentPlayer.getHomePosition() + 
                          ", End: " + currentPlayer.getEndPosition());
 
-        // Save the current state BEFORE any move is made
+        // Save the current state BEFORE any move is made - this is critical for undo
         gameHistory.saveState(
             playerManager.getAllPlayers(),
             playerManager.getCurrentPlayerIndex(),
-            lastMoveWasHit,
-            lastHitVictim,
+            false,  // Reset hit tracking for the new state
+            null,
             gameOver,
             (winner != null ? winner.getColor() : null)
         );
@@ -137,24 +137,25 @@ public class Game {
         if (newPosition != currentPlayer.getEndPosition() && newPosition <= board.getMainBoardSize()) {
             Player victim = playerManager.getPlayerAtPosition(newPosition, currentPlayer);
             if (victim != null) {
-                System.out.println("[DEBUG Game] Potential hit at position " + newPosition + 
-                                 " with player " + victim.getColor());
+                System.out.println("[DEBUG Game] HIT detected: " + currentPlayer.getColor() + 
+                                 " hit " + victim.getColor() + 
+                                 " at position " + newPosition);
                 
-                // Save state just before processing hit so that undo restores pre-hit state
-                gameHistory.saveState(
-                    playerManager.getAllPlayers(),
-                    playerManager.getCurrentPlayerIndex(),
-                    false,
-                    null,
-                    gameOver,
-                    (winner != null ? winner.getColor() : null)
-                );
+                // Save the victim's original position before they get sent home
+                int victimOriginalPosition = victim.getCurrentPosition();
+                System.out.println("[DEBUG Game] Saved victim original position: " + victimOriginalPosition);
+                
+                // Note: We don't need to save state here anymore since we saved at start of turn
+                
                 lastMoveWasHit = rules.handleHit(currentPlayer, victim, playerManager);
                 if (lastMoveWasHit) {
                     lastHitVictim = victim.getColor();
-                    System.out.println("[DEBUG Game] Hit occurred. Victim: " + victim.getColor());
+                    System.out.println("[DEBUG Game] Hit occurred. Victim: " + victim.getColor() + 
+                                     " sent to HOME at position " + victim.getHomePosition() + 
+                                     " from original position " + victimOriginalPosition);
                     for (GameObserver observer : observers) {
-                        observer.onHit(currentPlayer, victim);
+                        // Pass the victim's original position to the observer
+                        observer.onHit(currentPlayer, victim, victimOriginalPosition);
                     }
                 }
             }
@@ -200,9 +201,13 @@ public class Game {
      * @return true if undo was successful
      */
     public boolean undo() {
+        System.out.println("\n[DEBUG Game] === Starting UNDO operation ===");
+        
         GameStateMemento memento = gameHistory.undo(playerManager);
         
         if (memento != null) {
+            System.out.println("[DEBUG Game] Successfully retrieved previous game state");
+            
             // Restore game-over state and winner from the saved state
             gameOver = memento.getGameOver();
             String restoredWinnerColor = memento.getWinnerColor();
@@ -220,9 +225,33 @@ public class Game {
             lastMoveWasHit = memento.isHitOccurred();
             lastHitVictim = memento.getHitVictimColor();
             
+            System.out.println("[DEBUG Game] Restored game state. Game over: " + gameOver + 
+                           ", Last move was hit: " + lastMoveWasHit + 
+                           ", Last hit victim: " + lastHitVictim);
+            
+            // Dump all player positions after undo
+            System.out.println("[DEBUG Game] Player positions after undo:");
+            for (Player player : playerManager.getAllPlayers()) {
+                System.out.println("[DEBUG Game]   " + player.getColor() + 
+                                 ": position " + player.getCurrentPosition());
+            }
+            
             // Notify observers of undo
             for (GameObserver observer : observers) {
-                observer.onUndo(playerManager.getCurrentPlayer());
+                Player currentPlayer = playerManager.getCurrentPlayer();
+                Player hitVictim = null;
+                
+                // If there was a hit, find the hit victim
+                if (lastMoveWasHit && lastHitVictim != null) {
+                    for (Player player : playerManager.getAllPlayers()) {
+                        if (player.getColor().equals(lastHitVictim)) {
+                            hitVictim = player;
+                            break;
+                        }
+                    }
+                }
+                
+                observer.onUndo(currentPlayer, lastMoveWasHit, hitVictim);
             }
             
             return true;

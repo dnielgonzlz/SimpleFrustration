@@ -16,7 +16,8 @@ public class GameStateMemento {
     private final boolean hitOccurred;
     private final String hitVictimColor;
     private final boolean gameOver;        
-    private final String winnerColor;      
+    private final String winnerColor;
+    private final Map<String, Integer> previousPositions; // Track previous positions for better undo messaging
     
     /**
      * Constructor for a game state memento
@@ -30,6 +31,7 @@ public class GameStateMemento {
     public GameStateMemento(List<Player> players, int currentPlayerIndex, boolean hitOccurred, String hitVictimColor, boolean gameOver, String winnerColor) {
         this.playerPositions = new HashMap<>();
         this.playerMoveCounts = new HashMap<>();
+        this.previousPositions = new HashMap<>(); // Initialize previous positions map
         this.currentPlayerIndex = currentPlayerIndex;
         this.hitOccurred = hitOccurred;
         this.hitVictimColor = hitVictimColor;
@@ -117,5 +119,31 @@ public class GameStateMemento {
      */
     public String getWinnerColor() {
         return winnerColor;
+    }
+    
+    /**
+     * Set the previous position for a player
+     * @param color Player color
+     * @param position Previous position
+     */
+    public void setPreviousPosition(String color, int position) {
+        this.previousPositions.put(color, position);
+    }
+    
+    /**
+     * Get the previous position for a player
+     * @param color Player color
+     * @return Previous position or current position if not set
+     */
+    public int getPreviousPosition(String color) {
+        return previousPositions.getOrDefault(color, getPlayerPosition(color));
+    }
+    
+    /**
+     * Get all previous positions
+     * @return Map of player colors to previous positions
+     */
+    public Map<String, Integer> getPreviousPositions() {
+        return new HashMap<>(previousPositions);
     }
 }

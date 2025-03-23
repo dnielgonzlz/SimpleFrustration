@@ -19,8 +19,9 @@ public interface GameObserver {
      * Called when a player is hit
      * @param attacker The player who caused the hit
      * @param victim The player who was hit
+     * @param victimOriginalPosition The original position of the victim before being hit
      */
-    void onHit(Player attacker, Player victim);
+    void onHit(Player attacker, Player victim, int victimOriginalPosition);
     
     /**
      * Called when a player overshoots the end position
@@ -38,6 +39,8 @@ public interface GameObserver {
     /**
      * Called when a move is undone
      * @param player The player whose move was undone
+     * @param hitOccurred Whether a hit occurred in the undone move
+     * @param hitVictim The player who was hit (if any)
      */
-    void onUndo(Player player);
+    void onUndo(Player player, boolean hitOccurred, Player hitVictim);
 }

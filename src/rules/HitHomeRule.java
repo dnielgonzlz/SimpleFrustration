@@ -27,6 +27,15 @@ public class HitHomeRule implements RuleStrategy {
     @Override
     public boolean handleHit(Player attacker, Player victim, PlayerManager playerManager) {
         // Hit rule: send the victim back to home
+        System.out.println("[DEBUG HitHomeRule] Processing hit. Attacker: " + attacker.getColor() + 
+                         " at position " + attacker.getCurrentPosition() + 
+                         ", Victim: " + victim.getColor() + 
+                         " at position " + victim.getCurrentPosition());
+        
+        System.out.println("[DEBUG HitHomeRule] Sending " + victim.getColor() + 
+                         " from position " + victim.getCurrentPosition() + 
+                         " to HOME at position " + victim.getHomePosition());
+        
         victim.resetToHome();
         return true;
     }

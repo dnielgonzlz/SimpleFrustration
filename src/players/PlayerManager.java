@@ -93,11 +93,21 @@ public class PlayerManager {
      * @return The player at that position, or null if none
      */
     public Player getPlayerAtPosition(int position, Player excludePlayer) {
+        System.out.println("[DEBUG PlayerManager] Checking for players at position " + position + 
+                          " (excluding " + excludePlayer.getColor() + ")");
+        
         for (Player player : players) {
+            System.out.println("[DEBUG PlayerManager]   Checking " + player.getColor() + 
+                             " at position " + player.getCurrentPosition());
+            
             if (player != excludePlayer && player.getCurrentPosition() == position) {
+                System.out.println("[DEBUG PlayerManager]   Found " + player.getColor() + 
+                                 " at position " + position);
                 return player;
             }
         }
+        
+        System.out.println("[DEBUG PlayerManager]   No player found at position " + position);
         return null;
     }
     
