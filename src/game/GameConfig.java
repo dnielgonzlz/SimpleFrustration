@@ -10,6 +10,7 @@ public class GameConfig {
     private final int numPlayers;
     private final String diceType;
     private final String[] ruleTypes;
+    private boolean undoEnabled;
     
     /**
      * Constructor for game configuration
@@ -23,6 +24,23 @@ public class GameConfig {
         this.numPlayers = numPlayers;
         this.diceType = diceType;
         this.ruleTypes = ruleTypes;
+        this.undoEnabled = false; // Default to false
+    }
+    
+    /**
+     * Set whether undo feature is enabled
+     * @param enabled true to enable undo feature
+     */
+    public void setUndoEnabled(boolean enabled) {
+        this.undoEnabled = enabled;
+    }
+    
+    /**
+     * Check if undo feature is enabled
+     * @return true if undo is enabled
+     */
+    public boolean isUndoEnabled() {
+        return undoEnabled;
     }
     
     /**
@@ -115,10 +133,12 @@ public class GameConfig {
 
         builder.append("Dice: ");
         if ("single".equalsIgnoreCase(diceType)) {
-            builder.append("Single random 6 sided die");
+            builder.append("Single random 6 sided die\n");
         } else {
-            builder.append("Two random 6 sided dice");
+            builder.append("Two random 6 sided dice\n");
         }
+        
+        builder.append("Undo feature: ").append(undoEnabled ? "Enabled" : "Disabled");
         
         return builder.toString();
     }
