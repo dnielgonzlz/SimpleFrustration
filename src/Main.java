@@ -13,13 +13,13 @@ public class Main {
         // Configure the game with hardcoded settings
 
         // Options: "basic", "large"
-        String boardSize = "large";
+        String boardSize = "basic";
         // Options: 2 or 4
-        int numPlayers = 4;
+        int numPlayers = 2;
         // Options: "single", "double"
-        String diceType = "double";  
+        String diceType = "single";
         // Options: empty array, "exactEnd", "hitHome", or both
-        String[] ruleTypes = {"exactEnd", "hitHome"};
+        String[] ruleTypes = {"exactEnd"};
         // Options: true or false
         boolean undoEnabled = false;
         

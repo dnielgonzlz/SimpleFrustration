@@ -143,4 +143,4 @@ I think the hardest part of the game was handling state depending on the rules t
 
 I hope you like this code!
 
-PS: I left all the debugging on to make the game easier to read and understand. I did not did any tests because I am not good with them yet, but I've gotten pretty good at adding console logs (or in this case, print.ln) around the code to make sure the flow of data is working properly.
+PS: I left all the debugging on to make the game easier to read and understand. I did not did any tests because I am not good with them yet, but I've gotten pretty good at adding console logs (or in this case, println) around the code to make sure the flow of data is working properly.
