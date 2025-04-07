@@ -62,7 +62,7 @@ Players can undo their last move, allowing them to take back a dice roll and try
 
 ### Players Package
 - **Player**: Represents a player with position and movement
-- **PlayerColor**: Value Object for the Color of the player (being completely honest, I still don't quite understand the practical usage of Value Objects but it was the only thing I could think of to make into a Value Object)
+- **PlayerColor**: Value Object for the Color of the player (being completely honest, I still don't quite understand the practical usage of Value Objects, but it was the only thing I could think of to make into a Value Object. I suppose it's a similar use case of types in Typescript).
 - **PlayerManager**: Manages all players and turn order
 
 ### Rules Package
@@ -104,6 +104,11 @@ Used to notify interested parties about game events like moves, hits, and wins. 
 
 ### Memento Pattern
 Used in the undo functionality to capture and restore game state without violating encapsulation. GameStateMemento stores the state and GameHistory manages these states.
+This is the only one that I managed to find online that we not learned in class, but I was researching into different patterns while I was looking into how to solve for the State problem.
+
+I found this resource that I found quite helpful on how to design this kind of features.
+
+https://refactoring.guru/design-patterns/memento
 
 ## Implementation Details
 
@@ -128,6 +133,14 @@ The game provides detailed console output for each turn, showing:
 - Hit events and their consequences
 - Win announcements and game statistics
 
-## Conclusion
+## Final Thoughts
 
-This implementation of Simple Frustration demonstrates object-oriented design principles, design patterns, and clean code practices. It provides a flexible and extensible framework that could easily be adapted for other board games or additional variations.
+I tried to make this game as over-engineered as possible to showcase my skills on designing software, and instead of keeping my original CLI structure for the assignment, I pivoted in a different way.
+
+Writing this project not only made me aware that there are different patterns I can follow when writing code, but that you can also change the color of your terminal output! Genuinely I'm still shocked by such a small thing haha. It was something I needed to figure out in order to visualize the players process, since without a GUI it's hard for me to see the movements happening, and it got pretty hard then it was with 4 players and I was making sure the rules were working properly.
+
+I think the hardest part of the game was handling state depending on the rules that are being used, but I am quite happy with the structure of this code.
+
+I hope you like this code!
+
+PS: I left all the debugging on to make the game easier to read and understand. I did not did any tests because I am not good with them yet, but I've gotten pretty good at adding console logs (or in this case, print.ln) around the code to make sure the flow of data is working properly.

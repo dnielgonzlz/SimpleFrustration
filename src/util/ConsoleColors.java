@@ -1,5 +1,7 @@
 package util;
 
+import players.PlayerColor;
+
 /**
  * Utility class for ANSI color codes to display colored text in console.
  */
@@ -40,5 +42,15 @@ public class ConsoleColors {
         }
         
         return ansiColor + text + RESET;
+    }
+    
+    /**
+     * Colorize text based on player color object
+     * @param text Text to colorize
+     * @param playerColor PlayerColor object
+     * @return Colorized text string with reset code
+     */
+    public static String colorize(String text, PlayerColor playerColor) {
+        return colorize(text, playerColor.getValue());
     }
 } 

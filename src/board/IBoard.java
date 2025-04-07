@@ -1,6 +1,7 @@
 package board;
 
 import players.Player;
+import players.PlayerColor;
 
 /**
  * Interface defining board functionality.
@@ -46,15 +47,33 @@ public interface IBoard {
     
     /**
      * Gets the home position for a player by color
-     * @param color The player's color
+     * @param color The player's color as a string
      * @return The home position
      */
     int getHomePosition(String color);
     
     /**
-     * Gets the position where a player should enter their tail
+     * Gets the home position for a player by PlayerColor
      * @param color The player's color
+     * @return The home position
+     */
+    default int getHomePosition(PlayerColor color) {
+        return getHomePosition(color.getValue());
+    }
+    
+    /**
+     * Gets the position where a player should enter their tail
+     * @param color The player's color as a string
      * @return The tail entry position
      */
     int getTailEntryPosition(String color);
+    
+    /**
+     * Gets the position where a player should enter their tail
+     * @param color The player's PlayerColor
+     * @return The tail entry position
+     */
+    default int getTailEntryPosition(PlayerColor color) {
+        return getTailEntryPosition(color.getValue());
+    }
 }

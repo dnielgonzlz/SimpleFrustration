@@ -80,7 +80,7 @@ public class LargeBoard implements IBoard {
     @Override
     public int calculateNewPosition(Player player, int diceRoll) {
         int currentPosition = player.getCurrentPosition();
-        int tailEntryPos = tailEntryPositions.get(player.getColor());
+        int tailEntryPos = tailEntryPositions.get(player.getColorString());
         
         System.out.println("[DEBUG LargeBoard] Calculating new position for " + player.getColor() + 
                          " from position " + currentPosition + 
@@ -164,7 +164,7 @@ public class LargeBoard implements IBoard {
     }
     
     private boolean passedTailEntry(int currentPosition, int newPosition, Player player) {
-        int tailEntryPos = tailEntryPositions.get(player.getColor());
+        int tailEntryPos = tailEntryPositions.get(player.getColorString());
         
         System.out.println("[DEBUG LargeBoard] Checking if passed tail entry. Current: " + currentPosition + 
                          ", New: " + newPosition + 

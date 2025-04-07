@@ -94,7 +94,7 @@ public class Game {
         
         Player currentPlayer = playerManager.getCurrentPlayer();
         
-        System.out.println("\n[DEBUG Game] === Starting turn for " + currentPlayer.getColor() + " player ===");
+        System.out.println("\n[DEBUG Game] === Starting turn for " + currentPlayer.getColorString() + " player ===");
         System.out.println("[DEBUG Game] Current position: " + currentPlayer.getCurrentPosition() + 
                          ", Home: " + currentPlayer.getHomePosition() + 
                          ", End: " + currentPlayer.getEndPosition());
@@ -106,7 +106,7 @@ public class Game {
             false,  // Reset hit tracking for the new state
             null,
             gameOver,
-            (winner != null ? winner.getColor() : null)
+            (winner != null ? winner.getColorString() : null)
         );
         
         // Reset hit tracking for the new turn
@@ -137,8 +137,8 @@ public class Game {
         if (newPosition != currentPlayer.getEndPosition() && newPosition <= board.getMainBoardSize()) {
             Player victim = playerManager.getPlayerAtPosition(newPosition, currentPlayer);
             if (victim != null) {
-                System.out.println("[DEBUG Game] HIT detected: " + currentPlayer.getColor() + 
-                                 " hit " + victim.getColor() + 
+                System.out.println("[DEBUG Game] HIT detected: " + currentPlayer.getColorString() + 
+                                 " hit " + victim.getColorString() + 
                                  " at position " + newPosition);
                 
                 // Save the victim's original position before they get sent home
@@ -149,8 +149,8 @@ public class Game {
                 
                 lastMoveWasHit = rules.handleHit(currentPlayer, victim, playerManager);
                 if (lastMoveWasHit) {
-                    lastHitVictim = victim.getColor();
-                    System.out.println("[DEBUG Game] Hit occurred. Victim: " + victim.getColor() + 
+                    lastHitVictim = victim.getColorString();
+                    System.out.println("[DEBUG Game] Hit occurred. Victim: " + victim.getColorString() + 
                                      " sent to HOME at position " + victim.getHomePosition() + 
                                      " from original position " + victimOriginalPosition);
                     for (GameObserver observer : observers) {
@@ -190,7 +190,7 @@ public class Game {
         if (!gameOver) {
             playerManager.switchPlayer();
             System.out.println("[DEBUG Game] Next player: " + 
-                             playerManager.getCurrentPlayer().getColor());
+                             playerManager.getCurrentPlayer().getColorString());
         }
         
         System.out.println("[DEBUG Game] === End of turn ===\n");
@@ -214,7 +214,7 @@ public class Game {
             winner = null;
             if (restoredWinnerColor != null) {
                 for (Player player : playerManager.getAllPlayers()) {
-                    if (player.getColor().equals(restoredWinnerColor)) {
+                    if (player.getColorString().equals(restoredWinnerColor)) {
                         winner = player;
                         break;
                     }
@@ -232,7 +232,7 @@ public class Game {
             // Dump all player positions after undo
             System.out.println("[DEBUG Game] Player positions after undo:");
             for (Player player : playerManager.getAllPlayers()) {
-                System.out.println("[DEBUG Game]   " + player.getColor() + 
+                System.out.println("[DEBUG Game]   " + player.getColorString() + 
                                  ": position " + player.getCurrentPosition());
             }
             
@@ -244,7 +244,7 @@ public class Game {
                 // If there was a hit, find the hit victim
                 if (lastMoveWasHit && lastHitVictim != null) {
                     for (Player player : playerManager.getAllPlayers()) {
-                        if (player.getColor().equals(lastHitVictim)) {
+                        if (player.getColorString().equals(lastHitVictim)) {
                             hitVictim = player;
                             break;
                         }

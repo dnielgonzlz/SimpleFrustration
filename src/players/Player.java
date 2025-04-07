@@ -6,7 +6,7 @@ import util.ConsoleColors;
  * Represents a player in the game.
  */
 public class Player {
-    private final String color;
+    private final PlayerColor color;
     private int currentPosition;
     private final int homePosition;
     private final int endPosition;
@@ -18,7 +18,7 @@ public class Player {
      * @param homePosition Starting home position
      * @param endPosition Winning end position
      */
-    public Player(String color, int homePosition, int endPosition) {
+    public Player(PlayerColor color, int homePosition, int endPosition) {
         this.color = color;
         this.homePosition = homePosition;
         this.currentPosition = homePosition;
@@ -30,8 +30,16 @@ public class Player {
      * Get the player's color
      * @return Player's color
      */
-    public String getColor() {
+    public PlayerColor getColor() {
         return color;
+    }
+    
+    /**
+     * Get the player's color string value
+     * @return Player's color string
+     */
+    public String getColorString() {
+        return color.getValue();
     }
     
     /**
@@ -39,7 +47,7 @@ public class Player {
      * @return Colored text of the player's color name
      */
     public String getColoredDisplay() {
-        return ConsoleColors.colorize(color, color);
+        return ConsoleColors.colorize(color.getValue(), color.getValue());
     }
     
     /**
@@ -87,7 +95,7 @@ public class Player {
      * @param newPosition The new position
      */
     public void move(int newPosition) {
-        System.out.println("[DEBUG Player] " + color + " moving from position " + currentPosition + " to " + newPosition);
+        System.out.println("[DEBUG Player] " + color.getValue() + " moving from position " + currentPosition + " to " + newPosition);
         this.currentPosition = newPosition;
         this.totalMoves++;
     }
@@ -97,7 +105,7 @@ public class Player {
      * @param position The position to set
      */
     public void setPosition(int position) {
-        System.out.println("[DEBUG Player] " + color + " position directly set from " + currentPosition + " to " + position + " (undo operation)");
+        System.out.println("[DEBUG Player] " + color.getValue() + " position directly set from " + currentPosition + " to " + position + " (undo operation)");
         this.currentPosition = position;
     }
     
@@ -105,7 +113,7 @@ public class Player {
      * Reset the player to their home position
      */
     public void resetToHome() {
-        System.out.println("[DEBUG Player] " + color + " reset from position " + currentPosition + " to HOME at position " + homePosition);
+        System.out.println("[DEBUG Player] " + color.getValue() + " reset from position " + currentPosition + " to HOME at position " + homePosition);
         this.currentPosition = homePosition;
     }
     

@@ -77,7 +77,7 @@ public class BasicBoard implements IBoard {
     @Override
     public int calculateNewPosition(Player player, int diceRoll) {
         int currentPosition = player.getCurrentPosition();
-        int tailEntryPos = tailEntryPositions.get(player.getColor());
+        int tailEntryPos = tailEntryPositions.get(player.getColorString());
         
         System.out.println("[DEBUG Board] Calculating new position for " + player.getColor() + 
                          " from position " + currentPosition + 
@@ -161,7 +161,7 @@ public class BasicBoard implements IBoard {
     }
     
     private boolean passedTailEntry(int currentPosition, int newPosition, Player player) {
-        int tailEntryPos = tailEntryPositions.get(player.getColor());
+        int tailEntryPos = tailEntryPositions.get(player.getColorString());
         int homePos = player.getHomePosition();
         
         System.out.println("[DEBUG Board] Checking if passed tail entry. Current: " + currentPosition + 

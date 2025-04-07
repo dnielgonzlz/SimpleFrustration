@@ -32,13 +32,13 @@ public class PlayerManager {
         players.clear();
         
         // Always add Red and Blue
-        players.add(factory.createPlayer("Red", board));
-        players.add(factory.createPlayer("Blue", board));
+        players.add(factory.createPlayer(PlayerColor.RED, board));
+        players.add(factory.createPlayer(PlayerColor.BLUE, board));
         
         // Add Green and Yellow for 4-player games
         if (numPlayers == 4) {
-            players.add(factory.createPlayer("Green", board));
-            players.add(factory.createPlayer("Yellow", board));
+            players.add(factory.createPlayer(PlayerColor.GREEN, board));
+            players.add(factory.createPlayer(PlayerColor.YELLOW, board));
         }
         
         // Reset to first player
@@ -94,14 +94,14 @@ public class PlayerManager {
      */
     public Player getPlayerAtPosition(int position, Player excludePlayer) {
         System.out.println("[DEBUG PlayerManager] Checking for players at position " + position + 
-                          " (excluding " + excludePlayer.getColor() + ")");
+                          " (excluding " + excludePlayer.getColorString() + ")");
         
         for (Player player : players) {
-            System.out.println("[DEBUG PlayerManager]   Checking " + player.getColor() + 
+            System.out.println("[DEBUG PlayerManager]   Checking " + player.getColorString() + 
                              " at position " + player.getCurrentPosition());
             
             if (player != excludePlayer && player.getCurrentPosition() == position) {
-                System.out.println("[DEBUG PlayerManager]   Found " + player.getColor() + 
+                System.out.println("[DEBUG PlayerManager]   Found " + player.getColorString() + 
                                  " at position " + position);
                 return player;
             }

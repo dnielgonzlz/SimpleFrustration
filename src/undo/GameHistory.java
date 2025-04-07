@@ -37,7 +37,7 @@ public class GameHistory {
         // Log player positions being saved
         System.out.println("[DEBUG History] Saving player positions:");
         for (Player player : players) {
-            System.out.println("[DEBUG History]   " + player.getColor() + 
+            System.out.println("[DEBUG History]   " + player.getColorString() + 
                                ": position " + player.getCurrentPosition() + 
                                ", moves " + player.getTotalMoves());
         }
@@ -85,18 +85,18 @@ public class GameHistory {
         
         for (Player player : players) {
             int oldPosition = player.getCurrentPosition();
-            int position = positions.get(player.getColor());
+            int position = positions.get(player.getColorString());
             
             // Set position without incrementing move counter
             player.setPosition(position);
             
             // Restore move count if available
-            Integer moveCount = moveCounts.get(player.getColor());
+            Integer moveCount = moveCounts.get(player.getColorString());
             if (moveCount != null) {
                 player.setTotalMoves(moveCount);
             }
             
-            System.out.println("[DEBUG History] Restored " + player.getColor() + 
+            System.out.println("[DEBUG History] Restored " + player.getColorString() + 
                               " from position " + oldPosition + 
                               " to position " + position);
         }

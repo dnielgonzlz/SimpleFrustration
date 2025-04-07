@@ -7,14 +7,15 @@ import java.util.Objects;
  * Value object representing a player's color.
  */
 public class PlayerColor {
-    // Standard color constants
+    // Define valid colors first before using them
+    private static final List<String> VALID_COLORS = 
+        Arrays.asList("Red", "Blue", "Green", "Yellow");
+    
+    // Standard color constants - defined after VALID_COLORS
     public static final PlayerColor RED = new PlayerColor("Red");
     public static final PlayerColor BLUE = new PlayerColor("Blue");
     public static final PlayerColor GREEN = new PlayerColor("Green");
     public static final PlayerColor YELLOW = new PlayerColor("Yellow");
-    
-    private static final List<String> VALID_COLORS = 
-        Arrays.asList("Red", "Blue", "Green", "Yellow");
     
     private final String value;
     

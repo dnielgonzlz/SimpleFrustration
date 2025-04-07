@@ -21,7 +21,7 @@ public class ConsoleObserver implements GameObserver {
         boolean oldIsTail = oldPosition > board.getMainBoardSize();
         boolean newIsTail = newPosition > board.getMainBoardSize();
         
-        String playerColor = player.getColor();
+        String playerColor = player.getColorString();
         
         System.out.println(ConsoleColors.colorize(playerColor + " play " + playCount + " rolls " + diceRoll, playerColor));
         System.out.println(ConsoleColors.colorize(playerColor + " moves from " + 
@@ -31,10 +31,10 @@ public class ConsoleObserver implements GameObserver {
     
     @Override
     public void onHit(Player attacker, Player victim, int victimOriginalPosition) {
-        String victimColor = victim.getColor();
+        String victimColor = victim.getColorString();
         int hitPosition = attacker.getCurrentPosition();
         
-        System.out.println("[DEBUG Observer] HIT event: " + attacker.getColor() + 
+        System.out.println("[DEBUG Observer] HIT event: " + attacker.getColorString() + 
                           " hit " + victimColor + 
                           " at position " + hitPosition);
         System.out.println("[DEBUG Observer] Victim original position: " + victimOriginalPosition + 
@@ -48,13 +48,13 @@ public class ConsoleObserver implements GameObserver {
     
     @Override
     public void onOvershoot(Player player) {
-        String playerColor = player.getColor();
+        String playerColor = player.getColorString();
         System.out.println(ConsoleColors.colorize(playerColor + " overshoots!", playerColor));
     }
     
     @Override
     public void onWin(Player winner, int totalTurns) {
-        String winnerColor = winner.getColor();
+        String winnerColor = winner.getColorString();
         System.out.println(ConsoleColors.colorize(winnerColor + " wins in " + winner.getTotalMoves() + " moves!", winnerColor));
         System.out.println("Total plays " + totalTurns);
     }
@@ -66,7 +66,7 @@ public class ConsoleObserver implements GameObserver {
         if (hitOccurred && hitVictim != null) {
             // If a hit was undone, show detailed restoration message
             // For the victim: Home -> Current Position (the position they were in before being hit)
-            String victimColor = hitVictim.getColor();
+            String victimColor = hitVictim.getColorString();
             boolean victimIsTail = hitVictim.getCurrentPosition() > board.getMainBoardSize();
             System.out.println(ConsoleColors.colorize(victimColor + " moves from HOME (Position " + 
                                hitVictim.getHomePosition() + ") to " + 
@@ -75,7 +75,7 @@ public class ConsoleObserver implements GameObserver {
             
             // For the attacker: Current Position -> Previous Position
             // After an undo, player.getCurrentPosition() will be where they were before hitting
-            String attackerColor = player.getColor();
+            String attackerColor = player.getColorString();
             boolean attackerIsTail = player.getCurrentPosition() > board.getMainBoardSize();
             
             System.out.println(ConsoleColors.colorize(attackerColor + " moves from " + 

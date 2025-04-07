@@ -10,14 +10,14 @@ import java.util.Map;
  */
 public class GameStateMemento {
     private final Map<String, Integer> playerPositions;
-    private final Map<String, Integer> playerMoveCounts; // Store move counts
+    private final Map<String, Integer> playerMoveCounts;
     private final int currentPlayerIndex;
     private final int turnCount;
     private final boolean hitOccurred;
     private final String hitVictimColor;
     private final boolean gameOver;        
     private final String winnerColor;
-    private final Map<String, Integer> previousPositions; // Track previous positions for better undo messaging
+    private final Map<String, Integer> previousPositions; 
     
     /**
      * Constructor for a game state memento
@@ -41,8 +41,8 @@ public class GameStateMemento {
         // Calculate turn count and save player positions and move counts
         int turnCount = 0;
         for (Player player : players) {
-            this.playerPositions.put(player.getColor(), player.getCurrentPosition());
-            this.playerMoveCounts.put(player.getColor(), player.getTotalMoves());
+            this.playerPositions.put(player.getColorString(), player.getCurrentPosition());
+            this.playerMoveCounts.put(player.getColorString(), player.getTotalMoves());
             turnCount += player.getTotalMoves();
         }
         this.turnCount = turnCount;

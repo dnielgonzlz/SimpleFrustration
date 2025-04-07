@@ -15,7 +15,7 @@ public class Main {
         // Options: "basic", "large"
         String boardSize = "large";
         // Options: 2 or 4
-        int numPlayers = 2;
+        int numPlayers = 4;
         // Options: "single", "double"
         String diceType = "double";  
         // Options: empty array, "exactEnd", "hitHome", or both
