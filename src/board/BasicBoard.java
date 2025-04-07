@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BasicBoard implements IBoard {
-    private int numPlayers = 2; // Default to 2 players
+    private int numPlayers = 2;
     private static final int MAIN_BOARD_SIZE = 18;
     private static final int TAIL_SIZE = 3;
     

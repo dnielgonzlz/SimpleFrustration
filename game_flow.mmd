@@ -1,0 +1,24 @@
+flowchart TD
+    Start([Start Game]) --> Config[Configure Game]
+    Config --> Init[Initialize Board, Players, Rules]
+    Init --> TurnStart[Start Player Turn]
+    TurnStart --> DiceRoll[Roll Dice]
+    DiceRoll --> CalcPos[Calculate New Position]
+    CalcPos --> CheckEx{Exact End Rule?}
+    CheckEx -- Yes --> CheckEx2{Overshot End?}
+    CheckEx2 -- Yes --> BounceBack[Bounce Back From End]
+    CheckEx2 -- No --> Move[Move Player]
+    CheckEx -- No --> Move
+    BounceBack --> Move
+    Move --> CheckHit{Other Player at Position?}
+    CheckHit -- Yes --> CheckHitRule{Hit Home Rule?}
+    CheckHitRule -- Yes --> SendHome[Send Player Home]
+    CheckHitRule -- No --> SkipHit[Ignore Hit]
+    SendHome --> CheckWin
+    SkipHit --> CheckWin
+    CheckHit -- No --> CheckWin{At End Position?}
+    CheckWin -- Yes --> EndGame[End Game]
+    CheckWin -- No --> NextPlayer[Next Player]
+    NextPlayer --> TurnStart
+    EndGame --> DisplayStats[Display Game Statistics]
+    DisplayStats --> End([End Game])

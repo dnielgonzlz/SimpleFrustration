@@ -8,7 +8,7 @@ import java.util.Map;
  * Implementation of the large board (36 positions, 6 tail slots).
  */
 public class LargeBoard implements IBoard {
-    private int numPlayers = 2; // Default to 2 players
+    private int numPlayers = 2;
     private static final int MAIN_BOARD_SIZE = 36;
     private static final int TAIL_SIZE = 6;
     

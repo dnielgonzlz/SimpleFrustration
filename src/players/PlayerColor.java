@@ -3,10 +3,8 @@ package players;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
 /**
  * Value object representing a player's color.
- * Immutable once created.
  */
 public class PlayerColor {
     // Standard color constants

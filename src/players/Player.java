@@ -21,7 +21,7 @@ public class Player {
     public Player(String color, int homePosition, int endPosition) {
         this.color = color;
         this.homePosition = homePosition;
-        this.currentPosition = homePosition; // Start at home
+        this.currentPosition = homePosition;
         this.endPosition = endPosition;
         this.totalMoves = 0;
     }

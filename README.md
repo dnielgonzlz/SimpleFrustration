@@ -1,6 +1,18 @@
 # Simple Frustration Board Game
 
-Simple Frustration is a board game simulation implemented in Java, where players take turns rolling dice and moving around a board to reach their end position.
+This is a simulation of a game called "Simple Frustration". I was not familiarised with the name of this game in English, but I knew it was 'Ludo' in Spanish.
+
+In the beginning, the initial understanding of the task was straightforward, but then I realised I was getting confused with the logic of the increasing of the positions depending on the positions of the Players on the board, and what size the Board was.
+
+It took me a few days to realise that I misread the documentation of the assignment and I realised that the entry position was established in the requirements, and that the Tail Entry position was simply *Home - 1*. 
+
+My second biggest mistake, was that I thought this game was going to be a CLI game, but then I talked to other students and they told me the game needed to be a simulation, so I re-structured the Main code so that it runs based on the setup the code there has, rather than asking for the input of the user to run the simulation. I think this variable made more sense as a game, but I also understand that the goal of this assignment is to implement Software Architecture Design, not to develop a Game.
+
+My way of developing the game was develop the logic in my own way of thinking first, and then apply adjustments based on the patters that we had studied during the weeks of the course. I was also working on a few side projects using Typescript, React Native, Next and Python, which also allowed me to apply these principles into those projects, instead of only focusing on the Simple Frustration game, since I understand concepts better when I have to do something that I decide to do, rather than working on a project thought by someone else (I love building my own ideas).
+
+I also managed to implement all the advanced features of the game, struggling the most with the 'Undo' feature in combination with the 'Hit Rule'. I had a bug that it was saving the State of the game before the Hit happened, and it returned the *hitted* player to Home, but it maintained the position of the Player that did the hit for the next turn, so the Player got "an extra turn", which was obviosly not right. I managed to fix it by simply saving the state before any of the rolls happen.
+
+PS: I know it's a bit unnecessary but I also added a 500ms delay between the turns, so it just doesn't splurt out all the simulation in a short amount of time and it seems a bit more "natural".
 
 ## Game Rules
 
@@ -50,6 +62,7 @@ Players can undo their last move, allowing them to take back a dice roll and try
 
 ### Players Package
 - **Player**: Represents a player with position and movement
+- **PlayerColor**: Value Object for the Color of the player (being completely honest, I still don't quite understand the practical usage of Value Objects but it was the only thing I could think of to make into a Value Object)
 - **PlayerManager**: Manages all players and turn order
 
 ### Rules Package
@@ -91,48 +104,6 @@ Used to notify interested parties about game events like moves, hits, and wins. 
 
 ### Memento Pattern
 Used in the undo functionality to capture and restore game state without violating encapsulation. GameStateMemento stores the state and GameHistory manages these states.
-
-## Program Flow
-
-1. User starts the game and selects configuration options
-2. The game initializes with appropriate board, players, dice, and rules
-3. Players take turns:
-   - Roll dice
-   - Calculate new position based on rules
-   - Check for hits and handle according to rules
-   - Check for win condition
-   - Switch to next player
-4. When a player reaches the end position (subject to rules), they win
-5. Final statistics are displayed
-
-## Flowchart
-
-```mermaid
-flowchart TD
-    Start([Start Game]) --> Config[Configure Game]
-    Config --> Init[Initialize Board, Players, Rules]
-    Init --> TurnStart[Start Player Turn]
-    TurnStart --> DiceRoll[Roll Dice]
-    DiceRoll --> CalcPos[Calculate New Position]
-    CalcPos --> CheckEx{Exact End Rule?}
-    CheckEx -- Yes --> CheckEx2{Overshot End?}
-    CheckEx2 -- Yes --> BounceBack[Bounce Back From End]
-    CheckEx2 -- No --> Move[Move Player]
-    CheckEx -- No --> Move
-    BounceBack --> Move
-    Move --> CheckHit{Other Player at Position?}
-    CheckHit -- Yes --> CheckHitRule{Hit Home Rule?}
-    CheckHitRule -- Yes --> SendHome[Send Player Home]
-    CheckHitRule -- No --> SkipHit[Ignore Hit]
-    SendHome --> CheckWin
-    SkipHit --> CheckWin
-    CheckHit -- No --> CheckWin{At End Position?}
-    CheckWin -- Yes --> EndGame[End Game]
-    CheckWin -- No --> NextPlayer[Next Player]
-    NextPlayer --> TurnStart
-    EndGame --> DisplayStats[Display Game Statistics]
-    DisplayStats --> End([End Game])
-```
 
 ## Implementation Details
 
