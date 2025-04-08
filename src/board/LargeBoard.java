@@ -93,15 +93,13 @@ public class LargeBoard implements IBoard {
         if (currentPosition == player.getHomePosition()) {
             return calculateMoveFromHome(currentPosition, diceRoll);
         }
-        
-        if (currentPosition == tailEntryPos) {
-            return MAIN_BOARD_SIZE + 1;
-        }
-        
-        if (currentPosition <= MAIN_BOARD_SIZE) {
+
+        // If position is on the main board (and not the tail entry pos), calculate main board move
+        if (currentPosition <= MAIN_BOARD_SIZE && currentPosition != tailEntryPos) {
             return calculateMainBoardMove(currentPosition, diceRoll, player, tailEntryPos);
         }
-        
+
+        // Otherwise (player is in the tail or starts on the tail entry pos), calculate tail move
         return calculateTailMove(currentPosition, diceRoll);
     }
     
@@ -170,12 +168,6 @@ public class LargeBoard implements IBoard {
                          ", New: " + newPosition + 
                          ", Tail entry: " + tailEntryPos);
         
-        // Check if already at tail entry
-        if (currentPosition == tailEntryPos) {
-            System.out.println("[DEBUG LargeBoard] Already at tail entry position. Passed: true");
-            return true;
-        }
-        
         // If we're moving to a position less than or equal to the main board size,
         // check if we passed the tail entry during movement
         if (newPosition <= MAIN_BOARD_SIZE) {
@@ -183,14 +175,14 @@ public class LargeBoard implements IBoard {
             // Check if we passed the tail entry position during this move
             if (tailEntryPos > player.getHomePosition()) {
                 // Tail entry is after home position
-                boolean passed = (currentPosition < tailEntryPos && newPosition >= tailEntryPos);
+                boolean passed = (currentPosition < tailEntryPos && newPosition > tailEntryPos);
                 System.out.println("[DEBUG LargeBoard] Tail entry after home. Passed: " + passed);
                 return passed;
             } else {
                 // Tail entry is before home position (wrap around case)
                 if (currentPosition < tailEntryPos) {
                     // Simple case - we pass the tail entry without wrapping
-                    boolean passed = newPosition >= tailEntryPos;
+                    boolean passed = newPosition > tailEntryPos;
                     System.out.println("[DEBUG LargeBoard] Tail entry before home (current < tail). Passed: " + passed);
                     return passed;
                 } else {
@@ -213,11 +205,11 @@ public class LargeBoard implements IBoard {
             // Now check if we would have passed the tail entry
             boolean passed;
             if (tailEntryPos > player.getHomePosition()) {
-                passed = (currentPosition < tailEntryPos && wrappedPosition >= tailEntryPos) || 
+                passed = (currentPosition < tailEntryPos && wrappedPosition > tailEntryPos) ||
                        (currentPosition > wrappedPosition);
                 System.out.println("[DEBUG LargeBoard] Case 1: Tail entry after home. Passed: " + passed);
             } else {
-                passed = (currentPosition < tailEntryPos && wrappedPosition >= tailEntryPos) || 
+                passed = (currentPosition < tailEntryPos && wrappedPosition > tailEntryPos) ||
                        (currentPosition > tailEntryPos && wrappedPosition >= player.getHomePosition());
                 System.out.println("[DEBUG LargeBoard] Case 2: Tail entry before home. Passed: " + passed);
             }

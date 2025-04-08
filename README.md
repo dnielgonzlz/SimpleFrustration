@@ -12,6 +12,8 @@ My way of developing the game was develop the logic in my own way of thinking fi
 
 I also managed to implement all the advanced features of the game, struggling the most with the 'Undo' feature in combination with the 'Hit Rule'. I had a bug that it was saving the State of the game before the Hit happened, and it returned the *hitted* player to Home, but it maintained the position of the Player that did the hit for the next turn, so the Player got "an extra turn", which was obviosly not right. I managed to fix it by simply saving the state before any of the rolls happen.
 
+The way that 'undo' was implemented first when I had the user to play the game via the CLI was for the user to write 'undo' in the terminal to perform an undo, but after removing the CLI setup to match the project specifications, I just created a basic function to randomly trigger the undo on random turns.
+
 PS: I know it's a bit unnecessary but I also added a 500ms delay between the turns, so it just doesn't splurt out all the simulation in a short amount of time and it seems a bit more "natural".
 
 ## Game Rules
